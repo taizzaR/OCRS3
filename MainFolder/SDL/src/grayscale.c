@@ -67,27 +67,80 @@ void wait_for_keypressed()
     } while (event.type != SDL_KEYUP);
 }
 
+size_t otsu_threshold(SDL_Surface *image_surface) // on grayscale image_surface
+{
+    size_t width = image_surface->w;
+    size_t height = image_surface->h;
+    size_t total = height*width;
+    float histogram[256] = { 0.0F };
+    for(size_t x=0; x < width; x++)
+    {
+        for(size_t y=0; y < height; y++)
+        {
+            Uint32 pixel;
+            pixel = get_pixel(image_surface, x, y);
+            Uint8 r, g, b;
+            SDL_GetRGB(pixel,image_surface->format, &r, &g, &b);
+            int grayLevel = r;
+            histogram[grayLevel] += 1;
+        }
+    }
+
+    for (int i = 0; i < 256; i++)
+        histogram[i] /= total;
+
+    float ut = 0;
+    for (int i = 0; i < 256; i++)
+        ut += i*histogram[i];
+
+    int max_k = 0;
+    float max_sigma_k = 0;
+    for (int k = 0; k < 256; k++)
+    {
+        float wk = 0;
+        for (int i = 0; i <= k; i++)
+            wk += histogram[i];
+        float uk = 0;
+        for (int i = 0; i <= k; i++)
+            uk += i*histogram[i];
+
+        float sigma_k = 0;
+        if (wk != 0 && wk != 1)
+            sigma_k = ((ut*wk - uk)*(ut*wk - uk)) / (wk*(1 - wk));
+        if (sigma_k > max_sigma_k)
+        {
+            max_k = k;
+            max_sigma_k = sigma_k;
+        }
+    }
+    return (size_t)max_k;
+}
+
+
+
 void SDL_FreeSurface(SDL_Surface* surface);
 
-int main(int argc, char** argv)
+int main()
 {
 
     SDL_Surface* image_surface;
     SDL_Surface* screen_surface;
+    size_t threshold;
 
     init_sdl();
 
-    image_surface = load_image("rouge.jpg");
+    image_surface = load_image("piece.jpg");
     screen_surface = display_image(image_surface);
+    threshold = otsu_threshold(image_surface);
 
 
     wait_for_keypressed();
-    int width = image_surface->w;
-    int height = image_surface->h;
+    size_t width = image_surface->w;
+    size_t height = image_surface->h;
 
-    for (int x = 0; x < width; x++)
+    for (size_t x = 0; x < width; x++)
     {
-        for (int y = 0; y < height; y++)
+        for (size_t y = 0; y < height; y++)
         {
             Uint32 pixel = get_pixel(image_surface, x, y);
             Uint8 r, g, b;
@@ -101,6 +154,31 @@ int main(int argc, char** argv)
     update_surface(screen_surface, image_surface);
 
     wait_for_keypressed();
+
+    
+    for(size_t x=0; x < width; x++)
+    {
+        for(size_t y=0; y < height; y++)
+        {
+            Uint32 pixel;
+            pixel = get_pixel(image_surface, x, y);
+            Uint8 r, g, b;
+            SDL_GetRGB(pixel,image_surface->format, &r, &g, &b);
+            size_t graylevel = r;
+            if (graylevel < threshold)
+            { r = 0; g = 0; b = 0; }
+            else
+            { r = 255; g = 255; b=255; }
+            pixel = SDL_MapRGB(image_surface->format, r, g, b);
+            put_pixel(image_surface, x, y, pixel);
+        }
+    }
+    update_surface(screen_surface, image_surface);
+
+
+
+    wait_for_keypressed();
+
 
     SDL_FreeSurface(image_surface);
     SDL_FreeSurface(screen_surface);
