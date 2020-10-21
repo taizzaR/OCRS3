@@ -75,3 +75,75 @@ void update_surface(SDL_Surface* screen, SDL_Surface* image)
 
     SDL_UpdateRect(screen, 0, 0, image->w, image->h);
 }
+
+
+size_t seuil(SDL_Surface *image_surface) // on grayscale image_surface
+{
+    size_t width = image_surface->w;
+    size_t height = image_surface->h;
+    size_t total = height*width;
+    float histogram[256] = { 0.0F };
+    for(size_t x=0; x < width; x++)
+    {
+        for(size_t y=0; y < height; y++)
+        {
+            Uint32 pixel;
+            pixel = get_pixel(image_surface, x, y);
+            Uint8 r, g, b;
+            SDL_GetRGB(pixel,image_surface->format, &r, &g, &b);
+            int grayLevel = r;
+            histogram[grayLevel] += 1;
+        }
+    }
+
+    for (int i = 0; i < 256; i++)
+        histogram[i] /= total;
+
+    float ut = 0;
+    for (int i = 0; i < 256; i++)
+        ut += i*histogram[i];
+
+    int max_k = 0;
+    float max_sigma_k = 0;
+    for (int k = 0; k < 256; k++)
+    {
+        float wk = 0;
+        for (int i = 0; i <= k; i++)
+            wk += histogram[i];
+        float uk = 0;
+        for (int i = 0; i <= k; i++)
+            uk += i*histogram[i];
+
+        float sigma_k = 0;
+        if (wk != 0 && wk != 1)
+            sigma_k = ((ut*wk - uk)*(ut*wk - uk)) / (wk*(1 - wk));
+        if (sigma_k > max_sigma_k)
+        {
+            max_k = k;
+            max_sigma_k = sigma_k;
+        }
+    }
+    return (size_t)max_k;
+}
+
+int* makeArray(SDL_Surface *img){
+         int *array = NULL;
+         array = malloc(sizeof(int) * ((img->h) * (img->w)));
+         int *arrayX = array;
+          for(int y = 0; y < img->h; ++y)
+          {
+                  for(int x = 0; x < img->w; ++x)
+                  {
+                        Uint32 p = get_pixel(img, x, y);
+                        Uint8 r, g, b;
+                        SDL_GetRGB(p, img->format, &r, &g, &b);
+                        if(r >= 128)
+                                 *arrayX = 0;
+                            else
+                                 *arrayX = 1;
+                                ++arrayX;
+                  }
+            }
+
+   return array;
+    }
