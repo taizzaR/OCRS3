@@ -1,7 +1,9 @@
 #include <err.h>
+#include <stdbool.h>
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 #include "pixel_operations.h"
+
 
 void init_sdl()
 {
@@ -71,18 +73,22 @@ int main()
     SDL_Surface* image_surface;
     SDL_Surface* screen_surface;
     size_t threshold;
+    
 
     init_sdl();
 
-    image_surface = load_image("piece.jpg");
+    image_surface = load_image("simple_text_noise.png");
     screen_surface = display_image(image_surface);
     threshold = seuil(image_surface);
 
 
     wait_for_keypressed();
+
     size_t width = image_surface->w;
     size_t height = image_surface->h;
+    
     //met l'image en gris
+
     for (size_t x = 0; x < width; x++)
     {
         for (size_t y = 0; y < height; y++)
@@ -97,7 +103,6 @@ int main()
         }
     }
     update_surface(screen_surface, image_surface);
-
     wait_for_keypressed();
 
     //met l'image en noir et blanc
@@ -118,11 +123,39 @@ int main()
             put_pixel(image_surface, x, y, pixel);
         }
     }
+    
+    update_surface(screen_surface, image_surface);
+    
+    wait_for_keypressed();
+
+    /*const int delta[8][2] =
+    {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
+    
+    for (int h = 0; h < image_surface->h; h++)
+    {
+        for (int w = 0; w < image_surface->w; w++)
+        {
+            int sum = 0;
+            for (int dir = 0; dir < 8; dir++)
+            {
+                int nh = h + delta[dir][0];
+                int nw = w + delta[dir][1];
+                if (nh >= 0 && nh < image_surface->h && nw >= 0 && nw < image_surface->w)
+                    sum += is_white_pixel(image_surface, nh, nw);
+            }
+
+            Uint32 white_pixel = SDL_MapRGB(image_surface->format, 255, 255, 255);
+            Uint32 black_pixel = SDL_MapRGB(image_surface->format, 0, 0, 0);
+            if (sum > 4)
+                put_pixel(image_surface, h, w, white_pixel);
+            else
+                put_pixel(image_surface, h, w, black_pixel);
+        }
+    }*/
+
     update_surface(screen_surface, image_surface);
 
-    wait_for_keypressed();
-    
-    makeArray(image_surface);
+    //makeArray(image_surface);
 
 
     wait_for_keypressed();
