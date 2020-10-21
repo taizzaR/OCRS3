@@ -51,5 +51,16 @@ struct NeuralNetwork Forward(struct NeuralNetwork Neural){};
 struct NeuralNetwork UpdateWeights(struct NeuralNetwork Neural){};
 
 
+struct NeuralNetwork Train(struct NeuralNetwork Neural){};
+
+struct NeuralNetwork Input(struct NeuralNetwork Neural){};
+
+struct NeuralNetwork Backward(struct NeuralNetwork Neural){};
+
+struct NeuralNetwork Forward(struct NeuralNetwork Neural){};
+
+struct NeuralNetwork UpdateWeights(struct NeuralNetwork Neural){};
+
+
 
 
