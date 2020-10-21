@@ -67,7 +67,7 @@ void wait_for_keypressed()
     } while (event.type != SDL_KEYUP);
 }
 
-size_t otsu_threshold(SDL_Surface *image_surface) // on grayscale image_surface
+size_t seuil(SDL_Surface *image_surface) // on grayscale image_surface
 {
     size_t width = image_surface->w;
     size_t height = image_surface->h;
@@ -116,6 +116,28 @@ size_t otsu_threshold(SDL_Surface *image_surface) // on grayscale image_surface
     return (size_t)max_k;
 }
 
+int* makeArray(SDL_Surface *img){
+         int *array = NULL;
+         array = malloc(sizeof(int) * ((img->h) * (img->w)));
+         int *arrayX = array;
+          for(int y = 0; y < img->h; ++y)
+          {
+                  for(int x = 0; x < img->w; ++x)
+                  {
+                        Uint32 p = get_pixel(img, x, y);
+                        Uint8 r, g, b;
+                        SDL_GetRGB(p, img->format, &r, &g, &b);
+                        if(r >= 128)
+                                 *arrayX = 0;
+                            else
+                                 *arrayX = 1;
+                                ++arrayX;
+                  }
+            }
+
+   return array;
+    }
+    
 
 
 void SDL_FreeSurface(SDL_Surface* surface);
@@ -129,15 +151,15 @@ int main()
 
     init_sdl();
 
-    image_surface = load_image("piece.jpg");
+    image_surface = load_image("f.jpg");
     screen_surface = display_image(image_surface);
-    threshold = otsu_threshold(image_surface);
+    threshold = seuil(image_surface);
 
 
     wait_for_keypressed();
     size_t width = image_surface->w;
     size_t height = image_surface->h;
-
+    //met l'image en gris
     for (size_t x = 0; x < width; x++)
     {
         for (size_t y = 0; y < height; y++)
@@ -155,7 +177,7 @@ int main()
 
     wait_for_keypressed();
 
-    
+    //met l'image en noir et blanc
     for(size_t x=0; x < width; x++)
     {
         for(size_t y=0; y < height; y++)
@@ -175,6 +197,9 @@ int main()
     }
     update_surface(screen_surface, image_surface);
 
+    wait_for_keypressed();
+    
+    makeArray(image_surface);
 
 
     wait_for_keypressed();
