@@ -6,7 +6,7 @@ struct Neuron{
 	double output;
 	int weightsLength;
 	double bias;
-	double delta //Je sais pas trop ce que cest
+	double delta
 	double inputs[2];
 	double weights[2];
 };
@@ -25,19 +25,26 @@ struct Dataset{
 	int datasetLength; // 2;
 }
 
-struct Neural_Network Initialization()
+int main()
 {
-    struct Neural_Network network;
-    network.biais0 = Random();
+    return 0;
 }
 
-double init_weight() {return ((double)rand())/((double)RAND_MAX);
+struct Neural_Network Initialization(struct NeuralNetwork network)
+{
+    for (int i = 0; i < layersNumber; i++)
+    {
+        for (int j = 0; j < LayerLength; j++)
+        {
+            
+        }
+    }
+}
+
 
 double xor(double x, double y):
-	if (x == y){
-		return 0;
-	}
-	return 1;
+{
+    return x == y ? 0 : 1;
 }
 
 struct NeuralNetwork Train(struct NeuralNetwork Neural){};

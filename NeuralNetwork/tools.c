@@ -2,9 +2,9 @@
 
 // Random(): returns a random double in [-1; 1]
 
-double Random()
+double Random(double lower, double upper)
 {
-    return ((double)rand()) / ((double)RAND_MAX / 2) - 1;
+    return (rand() % (upper - lower + 1)) + lower;
 }
 
 // Sigmoid(double x): the classical sigmoid function
@@ -12,12 +12,4 @@ double Random()
 double Sigmoid(double x):
 {
     return (1.0 / (1.0 + exp(-x)));
-}
-
-
-// Activation(double a, double output, double bias0) : return the quantity to add to the weights
-
-double Activation(double a, double output, double bias0)
-{
-    return a*(output + bias0);
 }
