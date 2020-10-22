@@ -11,6 +11,8 @@ void update_surface(SDL_Surface* screen, SDL_Surface* image);
 
 size_t seuil(SDL_Surface *image_surface);
 //int *get_histogram(SDL_Surface *image);
+//int seuil2(SDL_Surface *image_surface);
+
 
 int* makeArray(SDL_Surface *img);
 

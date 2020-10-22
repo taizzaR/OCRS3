@@ -67,6 +67,37 @@ void wait_for_keypressed()
     } while (event.type != SDL_KEYUP);
 }
 
+void array_swap(int array[], size_t i, size_t j)
+{
+  int element1 = array[i];
+  int element2 = array[j];
+  array[i] = element2;
+  array[j] = element1;
+}
+
+void array_select_sort(int array[], size_t len)
+{
+  size_t i = 0;
+  size_t j;
+  int min_index;
+  while(i<len)
+  {
+    /* Find Min Index */
+    j= i;
+    min_index = j;
+    while(j<len)
+    {
+        if(array[j]<array[min_index])
+        {
+            min_index = j;
+        }
+        j+=1;
+    }
+    array_swap(array,i,min_index);
+    i++;
+  }
+}
+
 int main()
 {
 
@@ -77,7 +108,7 @@ int main()
 
     init_sdl();
 
-    image_surface = load_image("simple_text_noise.png");
+    image_surface = load_image("noise.png");
     screen_surface = display_image(image_surface);
     threshold = seuil(image_surface);
 
@@ -123,17 +154,22 @@ int main()
             put_pixel(image_surface, x, y, pixel);
         }
     }
+
+    
     
     update_surface(screen_surface, image_surface);
     
     wait_for_keypressed();
 
+    //int width2 = image_surface->w;
+    //int height2 = image_surface->h;
+
     /*const int delta[8][2] =
     {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
     
-    for (int h = 0; h < image_surface->h; h++)
+    for (int h = 0; h < width2; h++)
     {
-        for (int w = 0; w < image_surface->w; w++)
+        for (int w = 0; w < height2; w++)
         {
             int sum = 0;
             for (int dir = 0; dir < 8; dir++)
@@ -152,6 +188,114 @@ int main()
                 put_pixel(image_surface, h, w, black_pixel);
         }
     }*/
+
+  int w;
+  int h;
+  w = image_surface -> w;
+  h = image_surface -> h;
+  int pixelTable[5];
+
+ for(int i = 0; i < w; i++)
+ {
+   for(int j = 0; j < h; j++)
+   {
+     for(int k = j; k <= j + 4; k++)
+     {
+       //Borders of picture
+       if(i == 0)
+       {
+         if(k == 0)
+         {
+            pixelTable[0] = get_pixel(image_surface, i, k);
+            pixelTable[1] = get_pixel(image_surface, i, k);
+            pixelTable[2] = get_pixel(image_surface, i, k);
+            pixelTable[3] = get_pixel(image_surface, i, k + 1);
+            pixelTable[4] = get_pixel(image_surface, i + 1, k);
+            break;
+         }
+         if(k == h)
+         {
+            pixelTable[0] = get_pixel(image_surface, i, k);
+            pixelTable[1] = get_pixel(image_surface, i, k - 1);
+            pixelTable[2] = get_pixel(image_surface, i, k);
+            pixelTable[3] = get_pixel(image_surface, i, k);
+            pixelTable[4] = get_pixel(image_surface, i + 1, k);
+            break;
+         }
+         else
+         {
+          pixelTable[0] = get_pixel(image_surface, i, k);
+          pixelTable[1] = get_pixel(image_surface, i, k - 1);
+          pixelTable[2] = get_pixel(image_surface, i, k);
+          pixelTable[3] = get_pixel(image_surface, i, k + 1);
+          pixelTable[4] = get_pixel(image_surface, i + 1, k);
+          break;
+         }
+       }
+       if(i == w)
+       {
+          if(k == 0)
+          {
+            pixelTable[0] = get_pixel(image_surface, i, k);
+            pixelTable[1] = get_pixel(image_surface, i, k);
+            pixelTable[2] = get_pixel(image_surface, i - 1, k);
+            pixelTable[3] = get_pixel(image_surface, i, k + 1);
+            pixelTable[4] = get_pixel(image_surface, i, k);
+            break;
+          }
+          if(k == h)
+          {
+            pixelTable[0] = get_pixel(image_surface, i, k);
+            pixelTable[1] = get_pixel(image_surface, i, k - 1);
+            pixelTable[2] = get_pixel(image_surface, i - 1, k);
+            pixelTable[3] = get_pixel(image_surface, i, k);
+            pixelTable[4] = get_pixel(image_surface, i, k);
+            break;
+          }
+          else
+          {
+            pixelTable[0] = get_pixel(image_surface, i, k);
+            pixelTable[1] = get_pixel(image_surface, i, k - 1);
+            pixelTable[2] = get_pixel(image_surface, i - 1, k);
+            pixelTable[3] = get_pixel(image_surface, i, k + 1);
+            pixelTable[4] = get_pixel(image_surface, i, k);
+            break;
+          }
+       }
+       if(k == 0)
+       {
+          pixelTable[0] = get_pixel(image_surface, i, k);
+          pixelTable[1] = get_pixel(image_surface, i, k);
+          pixelTable[2] = get_pixel(image_surface, i - 1, k);
+          pixelTable[3] = get_pixel(image_surface, i, k + 1);
+          pixelTable[4] = get_pixel(image_surface, i + 1, k);
+          break;
+       }
+       if(k == h)
+       {
+        pixelTable[0] = get_pixel(image_surface, i, k);
+        pixelTable[1] = get_pixel(image_surface, i, k - 1);
+        pixelTable[2] = get_pixel(image_surface, i - 1, k);
+        pixelTable[3] = get_pixel(image_surface, i, k);
+        pixelTable[4] = get_pixel(image_surface, i + 1, k);
+        break;
+       }
+       else
+       {
+        pixelTable[0] = get_pixel(image_surface, i, k);
+        pixelTable[1] = get_pixel(image_surface, i, k - 1);
+        pixelTable[2] = get_pixel(image_surface, i - 1, k);
+        pixelTable[3] = get_pixel(image_surface, i, k + 1);
+        pixelTable[4] = get_pixel(image_surface, i + 1, k);
+        break;
+       }
+     }
+      array_select_sort(pixelTable, 5);
+      int med = pixelTable[2];
+      put_pixel(image_surface, i, j, med);
+   }
+ }
+ 
 
     update_surface(screen_surface, image_surface);
 

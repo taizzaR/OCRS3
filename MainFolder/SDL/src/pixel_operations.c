@@ -79,22 +79,7 @@ void update_surface(SDL_Surface* screen, SDL_Surface* image)
 }
 
 
-/*static int *get_histogram(SDL_Surface *image)
-{
-    int *histogram = calloc(256, sizeof(int));
-    for (int h = 0; h < image->h; h++)
-    {
-        for (int w = 0; w < image->w; w++)
-        {
-            Uint8 r, g, b;
-            Uint32 pixel = image_get_pixel(image, h, w);
-            SDL_GetRGB(pixel, image->format, &r, &g, &b);
-            // This is a grayscale image so we have r = g = b
-            histogram[r]++;
-        }
-    }
-    return histogram;
-}*/
+
 
 size_t seuil(SDL_Surface *image_surface) // on grayscale image_surface
 {
@@ -174,6 +159,7 @@ bool is_white_pixel(SDL_Surface *image, int h, int w)
     SDL_GetRGB(pixel, image->format, &r, &g, &b);
     return r == 255 && g == 255 && b == 255;
 }
+
 
 
 
