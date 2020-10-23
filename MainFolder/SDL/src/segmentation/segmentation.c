@@ -4,6 +4,7 @@
 #include "../../src/image.h"
 #include "segmentation.h"
 
+
 static void draw_segmentation_on_image(
     SDL_Surface *image, struct PageAnalysis *page_analysis)
 {
@@ -33,7 +34,7 @@ struct PageAnalysis *segmentation(const char *input_image)
 {
     struct PageAnalysis *page_analysis = malloc(sizeof(struct PageAnalysis));
 
-    SDL_Surface *image = image_load(input_image);
+    SDL_Surface *image = image_load(image_surface);
     detect_lines(image, page_analysis);
 
     draw_segmentation_on_image(image, page_analysis);

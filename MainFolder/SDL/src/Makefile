@@ -7,10 +7,9 @@ CFLAGS= -Wall -Wextra -Werror -std=c99 -O3
 LDFLAGS=
 LDLIBS= `pkg-config --libs sdl` -lSDL_image
 
-all: display image
+all: image
 
-display: display.o
-image: pixel_operations.o image.o
+image: pixel_operations.o image.o 
 
 image.o: pixel_operations.h
 

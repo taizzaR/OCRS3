@@ -3,6 +3,7 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 #include "pixel_operations.h"
+//#include "segmentation.h"
 
 
 void init_sdl()
@@ -108,7 +109,7 @@ int main()
 
     init_sdl();
 
-    image_surface = load_image("simple_text_noise.png");
+    image_surface = load_image("image_test/noise.bmp");
     screen_surface = display_image(image_surface);
     threshold = seuil(image_surface);
 
@@ -120,9 +121,9 @@ int main()
     
     //met l'image en gris
 
-    for (size_t x = 0; x < height; x++)
+    for (size_t x = 0; x < width; x++)
     {
-        for (size_t y = 0; y < width; y++)
+        for (size_t y = 0; y < height; y++)
         {
             Uint32 pixel = get_pixel(image_surface, x, y);
             Uint8 r, g, b;
@@ -137,9 +138,9 @@ int main()
     wait_for_keypressed();
 
     //met l'image en noir et blanc
-    for(size_t x=0; x < height; x++)
+    for(size_t x=0; x < width; x++)
     {
-        for(size_t y=0; y < width; y++)
+        for(size_t y=0; y < height; y++)
         {
             Uint32 pixel;
             pixel = get_pixel(image_surface, x, y);
@@ -161,38 +162,39 @@ int main()
     
     wait_for_keypressed();
 
-    int width2 = image_surface->w;
-    int height2 = image_surface->h;
 
-    const int delta[8][2] =
-    {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
+void array_swap(int array[], size_t i, size_t j)
+{
+  int element1 = array[i];
+  int element2 = array[j];
+  array[i] = element2;
+  array[j] = element1;
+}
+
+void array_select_sort(int array[], size_t len)
+{
+  size_t i = 0;
+  size_t j;
+  int min_index;
+  while(i<len)
+  {
     
-    for (int h = 0; h < height2; h++)
+    j= i;
+    min_index = j;
+    while(j<len)
     {
-        for (int w = 0; w < width2; w++)
+        if(array[j]<array[min_index])
         {
-            int sum = 0;
-            for (int dir = 0; dir < 8; dir++)
-            {
-                int nh = h + delta[dir][0];
-                int nw = w + delta[dir][1];
-                if (nh >= 0 && nh < image_surface->h && nw >= 0 && nw < image_surface->w)
-                    sum += is_white_pixel(image_surface, nh, nw);
-            }
-
-            Uint32 white_pixel = SDL_MapRGB(image_surface->format, 255, 255, 255);
-            Uint32 black_pixel = SDL_MapRGB(image_surface->format, 0, 0, 0);
-            if (sum > 4)
-                put_pixel(image_surface, h, w, white_pixel);
-            else
-                put_pixel(image_surface, h, w, black_pixel);
+            min_index = j;
         }
+        j+=1;
     }
-
-  /*int w;
-  int h;
-  w = image_surface -> w;
-  h = image_surface -> h;
+    array_swap(array,i,min_index);
+    i++;
+  }
+}
+ int w = image_surface -> w;
+ int h = image_surface -> h;
   int pixelTable[5];
 
  for(int i = 0; i < w; i++)
@@ -294,14 +296,14 @@ int main()
       int med = pixelTable[2];
       put_pixel(image_surface, i, j, med);
    }
- }*/
+ }
+
+    //SDL_SaveBMP(image_surface, "src/image_segmentation.bmp")
+
+    
  
 
     update_surface(screen_surface, image_surface);
-
-    //makeArray(image_surface);
-
-
     wait_for_keypressed();
 
 
