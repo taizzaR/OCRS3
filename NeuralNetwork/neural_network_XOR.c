@@ -54,13 +54,32 @@ double xor(double x, double y):
     return x == y ? 0 : 1;
 }
 
+struct NeuralNetwork Forward(struct NeuralNetwork Neural, double (*ac) (double)){
+    int i,j,k = 0
+    double ac = 0;
+    for (i = 0; i < Neural.layernumbers; i++)
+    {
+        for (for j = 0,; j < Neural.layerLength[i]; j++){
+	    if (i != 0){
+		for (k = 0; Neural.layers[i][j].weightsLength; k++){
+		    Neural.layers[i][j].inputs[k] = Neural.layers[i-1][j].output[k];	
+		}
+	    }
+	    for (k = 0; k < Neural.layers[i][j].weightLength; k++){
+		y += (Neural.layers[i][j].inputs[k] * Neural.layers[i][j].weights[k]);}
+	    y += Neural[i][j].bias;
+	    y = (*ac)(y);
+	    Neural.layers[i][j].output = y;
+	}
+    }
+    return Neural;
+};
+
 struct NeuralNetwork Train(struct NeuralNetwork Neural){};
 
 struct NeuralNetwork Input(struct NeuralNetwork Neural){};
 
 struct NeuralNetwork Backward(struct NeuralNetwork Neural){};
-
-struct NeuralNetwork Forward(struct NeuralNetwork Neural){};
 
 struct NeuralNetwork UpdateWeights(struct NeuralNetwork Neural){};
 
