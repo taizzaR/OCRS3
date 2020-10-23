@@ -32,16 +32,16 @@ int main()
 
 struct Neural_Network Initialization(struct NeuralNetwork network)
 {
-    for (int i = 0; i < network.layersNumber; i++)
+    foreach (struct Neuron layer in network.layers)
     {
-        for (int j = 0; j < network.LayerLength; j++)
+        foreach (struct Neuron neuron in layer)
         {
-            for (int k = 0; k < network.layers[i][j].weightsLength; k++)
+            foreach (double weight in neuron.weights)
             {
-                network.layers[i][j].weights[j] = Random(-0.5, 0.5);
+                weight = Random(-0.5, 0.5);
             }
 
-            network.layers[i][j].bias = Random(0, 1);
+            neuron.bias = Random(0, 1);
         }
     }
 
