@@ -8,8 +8,12 @@
 Uint32 get_pixel(SDL_Surface* surface, unsigned x, unsigned y);
 void put_pixel(SDL_Surface* surface, unsigned x, unsigned y, Uint32 pixel);
 void update_surface(SDL_Surface* screen, SDL_Surface* image);
-
 size_t seuil(SDL_Surface *image_surface);
+void image_grayscale(SDL_Surface *image_surface);
+void image_binarize(SDL_Surface *image_surface);
+void array_swap(int array[], size_t i, size_t j);
+void array_select_sort(int array[], size_t len);
+void noiseReduction(SDL_Surface *image_surface);
 //int *get_histogram(SDL_Surface *image);
 //int seuil2(SDL_Surface *image_surface);
 

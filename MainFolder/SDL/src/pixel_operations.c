@@ -130,6 +130,192 @@ size_t seuil(SDL_Surface *image_surface) // on grayscale image_surface
     return (size_t)max_k;
 }
 
+void image_grayscale(SDL_Surface *image_surface)
+{
+    size_t width = image_surface->w;
+    size_t height = image_surface->h;
+    for (size_t x = 0; x < width; x++)
+    {
+        for (size_t y = 0; y < height; y++)
+        {
+            Uint32 pixel = get_pixel(image_surface, x, y);
+            Uint8 r, g, b;
+            SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+            Uint32 average = 0.3 * r + 0.59 * g + 0.11 * b;
+            r = g = b = average;
+            pixel = SDL_MapRGB(image_surface->format, r, g, b);
+            put_pixel(image_surface, x, y, pixel);
+        }
+    }
+}
+
+void image_binarize(SDL_Surface *image_surface)
+{
+    size_t width = image_surface->w;
+    size_t height = image_surface->h;
+    size_t threshold;
+    threshold = seuil(image_surface);
+    for(size_t x=0; x < width; x++)
+    {
+        for(size_t y=0; y < height; y++)
+        {
+            Uint32 pixel;
+            pixel = get_pixel(image_surface, x, y);
+            Uint8 r, g, b;
+            SDL_GetRGB(pixel,image_surface->format, &r, &g, &b);
+            size_t graylevel = r;
+            if (graylevel < threshold)
+            { r = 0; g = 0; b = 0; }
+            else
+            { r = 255; g = 255; b=255; }
+            pixel = SDL_MapRGB(image_surface->format, r, g, b);
+            put_pixel(image_surface, x, y, pixel);
+        }
+    }
+
+}
+
+
+void array_swap(int array[], size_t i, size_t j)
+{
+  int element1 = array[i];
+  int element2 = array[j];
+  array[i] = element2;
+  array[j] = element1;
+}
+
+void array_select_sort(int array[], size_t len)
+{
+  size_t i = 0;
+  size_t j;
+  int min_index;
+  while(i<len)
+  {
+    
+    j= i;
+    min_index = j;
+    while(j<len)
+    {
+        if(array[j]<array[min_index])
+        {
+            min_index = j;
+        }
+        j+=1;
+    }
+    array_swap(array,i,min_index);
+    i++;
+  }
+}
+
+void noiseReduction(SDL_Surface *image_surface)
+{
+    int w = image_surface -> w;
+ int h = image_surface -> h;
+  int pixelTable[5];
+
+ for(int i = 0; i < w; i++)
+ {
+   for(int j = 0; j < h; j++)
+   {
+     for(int k = j; k <= j + 4; k++)
+     {
+       //Borders of picture
+       if(i == 0)
+       {
+         if(k == 0)
+         {
+            pixelTable[0] = get_pixel(image_surface, i, k);
+            pixelTable[1] = get_pixel(image_surface, i, k);
+            pixelTable[2] = get_pixel(image_surface, i, k);
+            pixelTable[3] = get_pixel(image_surface, i, k + 1);
+            pixelTable[4] = get_pixel(image_surface, i + 1, k);
+            break;
+         }
+         if(k == h)
+         {
+            pixelTable[0] = get_pixel(image_surface, i, k);
+            pixelTable[1] = get_pixel(image_surface, i, k - 1);
+            pixelTable[2] = get_pixel(image_surface, i, k);
+            pixelTable[3] = get_pixel(image_surface, i, k);
+            pixelTable[4] = get_pixel(image_surface, i + 1, k);
+            break;
+         }
+         else
+         {
+          pixelTable[0] = get_pixel(image_surface, i, k);
+          pixelTable[1] = get_pixel(image_surface, i, k - 1);
+          pixelTable[2] = get_pixel(image_surface, i, k);
+          pixelTable[3] = get_pixel(image_surface, i, k + 1);
+          pixelTable[4] = get_pixel(image_surface, i + 1, k);
+          break;
+         }
+       }
+       if(i == w)
+       {
+          if(k == 0)
+          {
+            pixelTable[0] = get_pixel(image_surface, i, k);
+            pixelTable[1] = get_pixel(image_surface, i, k);
+            pixelTable[2] = get_pixel(image_surface, i - 1, k);
+            pixelTable[3] = get_pixel(image_surface, i, k + 1);
+            pixelTable[4] = get_pixel(image_surface, i, k);
+            break;
+          }
+          if(k == h)
+          {
+            pixelTable[0] = get_pixel(image_surface, i, k);
+            pixelTable[1] = get_pixel(image_surface, i, k - 1);
+            pixelTable[2] = get_pixel(image_surface, i - 1, k);
+            pixelTable[3] = get_pixel(image_surface, i, k);
+            pixelTable[4] = get_pixel(image_surface, i, k);
+            break;
+          }
+          else
+          {
+            pixelTable[0] = get_pixel(image_surface, i, k);
+            pixelTable[1] = get_pixel(image_surface, i, k - 1);
+            pixelTable[2] = get_pixel(image_surface, i - 1, k);
+            pixelTable[3] = get_pixel(image_surface, i, k + 1);
+            pixelTable[4] = get_pixel(image_surface, i, k);
+            break;
+          }
+       }
+       if(k == 0)
+       {
+          pixelTable[0] = get_pixel(image_surface, i, k);
+          pixelTable[1] = get_pixel(image_surface, i, k);
+          pixelTable[2] = get_pixel(image_surface, i - 1, k);
+          pixelTable[3] = get_pixel(image_surface, i, k + 1);
+          pixelTable[4] = get_pixel(image_surface, i + 1, k);
+          break;
+       }
+       if(k == h)
+       {
+        pixelTable[0] = get_pixel(image_surface, i, k);
+        pixelTable[1] = get_pixel(image_surface, i, k - 1);
+        pixelTable[2] = get_pixel(image_surface, i - 1, k);
+        pixelTable[3] = get_pixel(image_surface, i, k);
+        pixelTable[4] = get_pixel(image_surface, i + 1, k);
+        break;
+       }
+       else
+       {
+        pixelTable[0] = get_pixel(image_surface, i, k);
+        pixelTable[1] = get_pixel(image_surface, i, k - 1);
+        pixelTable[2] = get_pixel(image_surface, i - 1, k);
+        pixelTable[3] = get_pixel(image_surface, i, k + 1);
+        pixelTable[4] = get_pixel(image_surface, i + 1, k);
+        break;
+       }
+     }
+      array_select_sort(pixelTable, 5);
+      int med = pixelTable[2];
+      put_pixel(image_surface, i, j, med);
+   }
+ }
+}
+
+
 int* makeArray(SDL_Surface *img){
          int *array = NULL;
          array = malloc(sizeof(int) * ((img->h) * (img->w)));

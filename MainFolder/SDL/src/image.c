@@ -68,243 +68,46 @@ void wait_for_keypressed()
     } while (event.type != SDL_KEYUP);
 }
 
-/*void array_swap(int array[], size_t i, size_t j)
-{
-  int element1 = array[i];
-  int element2 = array[j];
-  array[i] = element2;
-  array[j] = element1;
-}
-
-void array_select_sort(int array[], size_t len)
-{
-  size_t i = 0;
-  size_t j;
-  int min_index;
-  while(i<len)
-  {
-    
-    j= i;
-    min_index = j;
-    while(j<len)
-    {
-        if(array[j]<array[min_index])
-        {
-            min_index = j;
-        }
-        j+=1;
-    }
-    array_swap(array,i,min_index);
-    i++;
-  }
-}*/
-
 int main()
 {
 
     SDL_Surface* image_surface;
     SDL_Surface* screen_surface;
-    size_t threshold;
+    
     
 
     init_sdl();
 
     image_surface = load_image("image_test/noise.bmp");
     screen_surface = display_image(image_surface);
-    threshold = seuil(image_surface);
+    
 
 
     wait_for_keypressed();
 
-    size_t width = image_surface->w;
-    size_t height = image_surface->h;
+    //size_t width = image_surface->w;
+    //size_t height = image_surface->h;
     
     //met l'image en gris
 
-    for (size_t x = 0; x < width; x++)
-    {
-        for (size_t y = 0; y < height; y++)
-        {
-            Uint32 pixel = get_pixel(image_surface, x, y);
-            Uint8 r, g, b;
-            SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
-            Uint32 average = 0.3 * r + 0.59 * g + 0.11 * b;
-            r = g = b = average;
-            pixel = SDL_MapRGB(image_surface->format, r, g, b);
-            put_pixel(image_surface, x, y, pixel);
-        }
-    }
+    image_grayscale(image_surface);
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();
 
     //met l'image en noir et blanc
-    for(size_t x=0; x < width; x++)
-    {
-        for(size_t y=0; y < height; y++)
-        {
-            Uint32 pixel;
-            pixel = get_pixel(image_surface, x, y);
-            Uint8 r, g, b;
-            SDL_GetRGB(pixel,image_surface->format, &r, &g, &b);
-            size_t graylevel = r;
-            if (graylevel < threshold)
-            { r = 0; g = 0; b = 0; }
-            else
-            { r = 255; g = 255; b=255; }
-            pixel = SDL_MapRGB(image_surface->format, r, g, b);
-            put_pixel(image_surface, x, y, pixel);
-        }
-    }
-
-    
-    
-    update_surface(screen_surface, image_surface);
-    
-    wait_for_keypressed();
-
-
-void array_swap(int array[], size_t i, size_t j)
-{
-  int element1 = array[i];
-  int element2 = array[j];
-  array[i] = element2;
-  array[j] = element1;
-}
-
-void array_select_sort(int array[], size_t len)
-{
-  size_t i = 0;
-  size_t j;
-  int min_index;
-  while(i<len)
-  {
-    
-    j= i;
-    min_index = j;
-    while(j<len)
-    {
-        if(array[j]<array[min_index])
-        {
-            min_index = j;
-        }
-        j+=1;
-    }
-    array_swap(array,i,min_index);
-    i++;
-  }
-}
- int w = image_surface -> w;
- int h = image_surface -> h;
-  int pixelTable[5];
-
- for(int i = 0; i < w; i++)
- {
-   for(int j = 0; j < h; j++)
-   {
-     for(int k = j; k <= j + 4; k++)
-     {
-       //Borders of picture
-       if(i == 0)
-       {
-         if(k == 0)
-         {
-            pixelTable[0] = get_pixel(image_surface, i, k);
-            pixelTable[1] = get_pixel(image_surface, i, k);
-            pixelTable[2] = get_pixel(image_surface, i, k);
-            pixelTable[3] = get_pixel(image_surface, i, k + 1);
-            pixelTable[4] = get_pixel(image_surface, i + 1, k);
-            break;
-         }
-         if(k == h)
-         {
-            pixelTable[0] = get_pixel(image_surface, i, k);
-            pixelTable[1] = get_pixel(image_surface, i, k - 1);
-            pixelTable[2] = get_pixel(image_surface, i, k);
-            pixelTable[3] = get_pixel(image_surface, i, k);
-            pixelTable[4] = get_pixel(image_surface, i + 1, k);
-            break;
-         }
-         else
-         {
-          pixelTable[0] = get_pixel(image_surface, i, k);
-          pixelTable[1] = get_pixel(image_surface, i, k - 1);
-          pixelTable[2] = get_pixel(image_surface, i, k);
-          pixelTable[3] = get_pixel(image_surface, i, k + 1);
-          pixelTable[4] = get_pixel(image_surface, i + 1, k);
-          break;
-         }
-       }
-       if(i == w)
-       {
-          if(k == 0)
-          {
-            pixelTable[0] = get_pixel(image_surface, i, k);
-            pixelTable[1] = get_pixel(image_surface, i, k);
-            pixelTable[2] = get_pixel(image_surface, i - 1, k);
-            pixelTable[3] = get_pixel(image_surface, i, k + 1);
-            pixelTable[4] = get_pixel(image_surface, i, k);
-            break;
-          }
-          if(k == h)
-          {
-            pixelTable[0] = get_pixel(image_surface, i, k);
-            pixelTable[1] = get_pixel(image_surface, i, k - 1);
-            pixelTable[2] = get_pixel(image_surface, i - 1, k);
-            pixelTable[3] = get_pixel(image_surface, i, k);
-            pixelTable[4] = get_pixel(image_surface, i, k);
-            break;
-          }
-          else
-          {
-            pixelTable[0] = get_pixel(image_surface, i, k);
-            pixelTable[1] = get_pixel(image_surface, i, k - 1);
-            pixelTable[2] = get_pixel(image_surface, i - 1, k);
-            pixelTable[3] = get_pixel(image_surface, i, k + 1);
-            pixelTable[4] = get_pixel(image_surface, i, k);
-            break;
-          }
-       }
-       if(k == 0)
-       {
-          pixelTable[0] = get_pixel(image_surface, i, k);
-          pixelTable[1] = get_pixel(image_surface, i, k);
-          pixelTable[2] = get_pixel(image_surface, i - 1, k);
-          pixelTable[3] = get_pixel(image_surface, i, k + 1);
-          pixelTable[4] = get_pixel(image_surface, i + 1, k);
-          break;
-       }
-       if(k == h)
-       {
-        pixelTable[0] = get_pixel(image_surface, i, k);
-        pixelTable[1] = get_pixel(image_surface, i, k - 1);
-        pixelTable[2] = get_pixel(image_surface, i - 1, k);
-        pixelTable[3] = get_pixel(image_surface, i, k);
-        pixelTable[4] = get_pixel(image_surface, i + 1, k);
-        break;
-       }
-       else
-       {
-        pixelTable[0] = get_pixel(image_surface, i, k);
-        pixelTable[1] = get_pixel(image_surface, i, k - 1);
-        pixelTable[2] = get_pixel(image_surface, i - 1, k);
-        pixelTable[3] = get_pixel(image_surface, i, k + 1);
-        pixelTable[4] = get_pixel(image_surface, i + 1, k);
-        break;
-       }
-     }
-      array_select_sort(pixelTable, 5);
-      int med = pixelTable[2];
-      put_pixel(image_surface, i, j, med);
-   }
- }
-
-    //SDL_SaveBMP(image_surface, "src/image_segmentation.bmp")
-
-    
- 
+    image_binarize(image_surface);
 
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();
+
+    //noise reduction
+    noiseReduction(image_surface);
+
+    update_surface(screen_surface, image_surface);
+    SDL_SaveBMP(image_surface, "image_test/image_segmentation.bmp");
+    wait_for_keypressed();
+
+
 
 
     SDL_FreeSurface(image_surface);
