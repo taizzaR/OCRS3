@@ -67,7 +67,7 @@ void wait_for_keypressed()
     } while (event.type != SDL_KEYUP);
 }
 
-void array_swap(int array[], size_t i, size_t j)
+/*void array_swap(int array[], size_t i, size_t j)
 {
   int element1 = array[i];
   int element2 = array[j];
@@ -82,7 +82,7 @@ void array_select_sort(int array[], size_t len)
   int min_index;
   while(i<len)
   {
-    /* Find Min Index */
+    
     j= i;
     min_index = j;
     while(j<len)
@@ -96,7 +96,7 @@ void array_select_sort(int array[], size_t len)
     array_swap(array,i,min_index);
     i++;
   }
-}
+}*/
 
 int main()
 {
@@ -108,7 +108,7 @@ int main()
 
     init_sdl();
 
-    image_surface = load_image("noise.png");
+    image_surface = load_image("simple_text_noise.png");
     screen_surface = display_image(image_surface);
     threshold = seuil(image_surface);
 
@@ -120,9 +120,9 @@ int main()
     
     //met l'image en gris
 
-    for (size_t x = 0; x < width; x++)
+    for (size_t x = 0; x < height; x++)
     {
-        for (size_t y = 0; y < height; y++)
+        for (size_t y = 0; y < width; y++)
         {
             Uint32 pixel = get_pixel(image_surface, x, y);
             Uint8 r, g, b;
@@ -137,9 +137,9 @@ int main()
     wait_for_keypressed();
 
     //met l'image en noir et blanc
-    for(size_t x=0; x < width; x++)
+    for(size_t x=0; x < height; x++)
     {
-        for(size_t y=0; y < height; y++)
+        for(size_t y=0; y < width; y++)
         {
             Uint32 pixel;
             pixel = get_pixel(image_surface, x, y);
@@ -161,15 +161,15 @@ int main()
     
     wait_for_keypressed();
 
-    //int width2 = image_surface->w;
-    //int height2 = image_surface->h;
+    int width2 = image_surface->w;
+    int height2 = image_surface->h;
 
-    /*const int delta[8][2] =
+    const int delta[8][2] =
     {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
     
-    for (int h = 0; h < width2; h++)
+    for (int h = 0; h < height2; h++)
     {
-        for (int w = 0; w < height2; w++)
+        for (int w = 0; w < width2; w++)
         {
             int sum = 0;
             for (int dir = 0; dir < 8; dir++)
@@ -187,9 +187,9 @@ int main()
             else
                 put_pixel(image_surface, h, w, black_pixel);
         }
-    }*/
+    }
 
-  int w;
+  /*int w;
   int h;
   w = image_surface -> w;
   h = image_surface -> h;
@@ -294,7 +294,7 @@ int main()
       int med = pixelTable[2];
       put_pixel(image_surface, i, j, med);
    }
- }
+ }*/
  
 
     update_surface(screen_surface, image_surface);
