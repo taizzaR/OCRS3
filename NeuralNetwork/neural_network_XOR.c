@@ -32,16 +32,16 @@ int main()
 
 struct Neural_Network Initialization(struct NeuralNetwork network)
 {
-    for (int i = 0; i < network.layersNumber; i++)
+    foreach (struct Neuron layer in network.layers)
     {
-        for (int j = 0; j < network.LayerLength; j++)
+        foreach (struct Neuron neuron in layer)
         {
-            for (int k = 0; k < network.layers[i][j].weightsLength; k++)
+            foreach (double weight in neuron.weights)
             {
-                network.layers[i][j].weights[j] = Random(-0.5, 0.5);
+                weight = Random(-0.5, 0.5);
             }
 
-            network.layers[i][j].bias = Random(0, 1);
+            neuron.bias = Random(0, 1);
         }
     }
 
@@ -54,13 +54,32 @@ double xor(double x, double y):
     return x == y ? 0 : 1;
 }
 
+struct NeuralNetwork Forward(struct NeuralNetwork Neural, double (*ac) (double)){
+    int i,j,k = 0
+    double ac = 0;
+    for (i = 0; i < Neural.layernumbers; i++)
+    {
+        for (for j = 0,; j < Neural.layerLength[i]; j++){
+	    if (i != 0){
+		for (k = 0; Neural.layers[i][j].weightsLength; k++){
+		    Neural.layers[i][j].inputs[k] = Neural.layers[i-1][j].output[k];	
+		}
+	    }
+	    for (k = 0; k < Neural.layers[i][j].weightLength; k++){
+		y += (Neural.layers[i][j].inputs[k] * Neural.layers[i][j].weights[k]);}
+	    y += Neural[i][j].bias;
+	    y = (*ac)(y);
+	    Neural.layers[i][j].output = y;
+	}
+    }
+    return Neural;
+};
+
 struct NeuralNetwork Train(struct NeuralNetwork Neural){};
 
 struct NeuralNetwork Input(struct NeuralNetwork Neural){};
 
 struct NeuralNetwork Backward(struct NeuralNetwork Neural){};
-
-struct NeuralNetwork Forward(struct NeuralNetwork Neural){};
 
 struct NeuralNetwork UpdateWeights(struct NeuralNetwork Neural){};
 
