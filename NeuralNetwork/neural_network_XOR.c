@@ -60,17 +60,18 @@ struct NeuralNetwork Forward(struct NeuralNetwork Neural, double (*ac) (double))
     for (i = 0; i < Neural.layernumbers; i++)
     {
         for (for j = 0,; j < Neural.layerLength[i]; j++){
-	    if (i != 0){
-		for (k = 0; Neural.layers[i][j].weightsLength; k++){
-		    Neural.layers[i][j].inputs[k] = Neural.layers[i-1][j].output[k];	
+	    	if (i != 0){
+				for (k = 0; Neural.layers[i][j].weightsLength; k++){
+		    		Neural.layers[i][j].inputs[k] = Neural.layers[i-1][j].output[k];	
+				}
+	    	}
+	    	for (k = 0; k < Neural.layers[i][j].weightLength; k++){
+				y += (Neural.layers[i][j].inputs[k] * Neural.layers[i][j].weights[k]);
+			}
+	    	y += Neural[i][j].bias;
+	    	y = (*ac)(y);
+	    	Neural.layers[i][j].output = y;
 		}
-	    }
-	    for (k = 0; k < Neural.layers[i][j].weightLength; k++){
-		y += (Neural.layers[i][j].inputs[k] * Neural.layers[i][j].weights[k]);}
-	    y += Neural[i][j].bias;
-	    y = (*ac)(y);
-	    Neural.layers[i][j].output = y;
-	}
     }
     return Neural;
 };
