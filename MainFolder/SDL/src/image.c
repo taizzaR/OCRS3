@@ -117,6 +117,18 @@ int main()
 
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();
+
+    blockDetection_horizontal(image_surface);
+
+    update_surface(screen_surface, image_surface);
+    wait_for_keypressed();
+
+    blockDetection_vertical(image_surface);
+
+    update_surface(screen_surface, image_surface);
+    wait_for_keypressed();
+
+
     SDL_FreeSurface(image_surface);
     SDL_FreeSurface(screen_surface);
     return 0;

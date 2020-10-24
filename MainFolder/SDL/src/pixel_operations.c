@@ -417,6 +417,154 @@ void charCut(SDL_Surface *image_surface)
   }
 }
 
+int mediumPixelSpacingVertical(SDL_Surface *image_surface)
+{
+  //Variables
+  Uint32 pixel;
+  Uint8 r;
+  Uint8 g;
+  Uint8 b;
+  int whitePixel = 0;
+  int blackPixel = 0;
+  int res = 0;
+  int w = image_surface -> w;
+  int h = image_surface -> h;
+
+  for(int i = 0; i < w; i++)
+  {
+    for(int j = 0; j < h; j++)
+    {
+      pixel = get_pixel(image_surface, i, j);
+      SDL_GetRGB(pixel, image_surface -> format, &r, &g, &b);
+      if(r == 255 && g == 255 && b == 255)
+        whitePixel++;
+      else
+        blackPixel++;
+    }
+  }
+  res = whitePixel / (blackPixel / 2);
+  return(res);
+}
+
+/**/
+int mediumPixelSpacingHorizontal(SDL_Surface *image_surface)
+{
+  Uint32 pixel;
+  Uint8 r;
+  Uint8 g;
+  Uint8 b;
+  int whitePixel = 0;
+  int blackPixel = 0;
+  int res = 0;
+  int w = image_surface -> w;
+  int h = image_surface -> h;
+
+  for(int i = 0; i < h; i++)
+  {
+    for(int j = 0; j < w; j++)
+    {
+      pixel = get_pixel(image_surface, j, i);
+      SDL_GetRGB(pixel, image_surface -> format, &r, &g, &b);
+      if(r == 255 && g == 255 && b == 255)
+        whitePixel++;
+      else
+        blackPixel++;
+    }
+
+  }
+  res = whitePixel / (blackPixel / 2);
+  return(res);
+}
+
+/* detect horizontal text block*/
+void blockDetection_horizontal(SDL_Surface *image_surface)
+{
+  Uint32 pixel;
+  Uint8 r;
+  Uint8 g;
+  Uint8 b;
+  int C = mediumPixelSpacingHorizontal(image_surface)*4;
+  int countWhite;
+  int w = image_surface -> w;
+  int h = image_surface -> h;
+
+  for(int i = 0; i < h; i++)
+  {
+    countWhite = 0;
+    for(int j = 0; j < w; j++)
+    {
+      pixel = get_pixel(image_surface, j, i);
+      SDL_GetRGB(pixel, image_surface -> format, &r, &g, &b);
+      if(r == 255 && g == 255 && b == 255)
+      {
+        countWhite++;
+      }
+      if(r == 0 && g == 0 && b == 0)
+      {
+        if(countWhite <= C)
+        {
+            int k = j - 1;
+            while(countWhite > 0)
+            {
+              pixel = SDL_MapRGB(image_surface -> format, 0, 0, 0);
+              put_pixel(image_surface, k, i, pixel);
+              countWhite--;
+              k--;
+            }
+        }
+        else
+        {
+          countWhite = 0;
+        }
+      }
+    }
+  }
+}
+
+/*detect vertical text block*/
+void blockDetection_vertical(SDL_Surface *image_surface)
+{
+  Uint32 pixel;
+  Uint8 r;
+  Uint8 g;
+  Uint8 b;
+  int C = mediumPixelSpacingVertical(image_surface) * 4;
+  int countBlack;
+  int w = image_surface -> w;
+  int h = image_surface -> h;
+
+  for(int i = 0; i < w; i++)
+  {
+    countBlack = 0;
+    for(int j = 0; j < h; j++)
+    {
+      pixel = get_pixel(image_surface, i, j);
+      SDL_GetRGB(pixel, image_surface -> format, &r, &g, &b);
+      if(r == 255 && g == 255 && b == 255)
+      {
+        countBlack++;
+      }
+      else
+      {
+        if(countBlack <= C)
+        {
+            int k = j - 1;
+            while(countBlack > 0)
+            {
+              pixel = SDL_MapRGB(image_surface -> format, 0, 0, 0);
+              put_pixel(image_surface, i, k, pixel);
+              countBlack--;
+              k--;
+            }
+        }
+        else
+        {
+          countBlack = 0;
+        }
+      }
+    }
+  }
+}
 
 
 int* makeArray(SDL_Surface *img){
