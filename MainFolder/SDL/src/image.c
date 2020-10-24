@@ -112,9 +112,11 @@ int main()
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();
     
+    charCut(image_surface);
 
 
-
+    update_surface(screen_surface, image_surface);
+    wait_for_keypressed();
     SDL_FreeSurface(image_surface);
     SDL_FreeSurface(screen_surface);
     return 0;

@@ -364,6 +364,59 @@ void lineCut(SDL_Surface *image_surface)
     }
 }
 
+void charCut(SDL_Surface *image_surface)
+{
+    // Variables
+  Uint32 pixel;
+  Uint8 r ;
+  Uint8 g;
+  Uint8 b;
+  int thereIsChar = 0;
+  int lineWasWhite = 1;
+  int canCut = 0;
+  int w = image_surface -> w;
+  int h = image_surface -> h;
+
+  for(int i = 0; i < w; i++)
+  {
+    lineWasWhite = 1;
+    for(int j = 0; j < h; j++)
+    {
+      pixel = get_pixel(image_surface, i, j);
+      SDL_GetRGB(pixel, image_surface -> format, &r, &g, &b);
+      if(r == 0 && g == 0 && b == 0)
+      {
+          thereIsChar = 1;
+          lineWasWhite = 0;
+          break;
+      }
+    }
+    if(lineWasWhite && !canCut)
+    {
+      continue;
+    }
+    if(thereIsChar && !canCut)
+    {
+      for(int k = 0; k < h; k++)
+      {
+        pixel = SDL_MapRGB(image_surface -> format, 255, 0, 0);
+        put_pixel(image_surface, i - 1, k, pixel);
+      }
+      canCut = 1;
+    }
+    if(lineWasWhite && canCut)
+    {
+      for(int k = 0; k < h; k++)
+      {
+        pixel = SDL_MapRGB(image_surface -> format, 255, 0, 0);
+        put_pixel(image_surface, i, k, pixel);
+      }
+      canCut = 0;
+    }
+
+  }
+}
+
 
 
 int* makeArray(SDL_Surface *img){
