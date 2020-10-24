@@ -14,6 +14,8 @@ void image_binarize(SDL_Surface *image_surface);
 void array_swap(int array[], size_t i, size_t j);
 void array_select_sort(int array[], size_t len);
 void noiseReduction(SDL_Surface *image_surface);
+void lineCut(SDL_Surface *image_surface);
+void charCut(SDL_Surface *image_surface);
 //int *get_histogram(SDL_Surface *image);
 //int seuil2(SDL_Surface *image_surface);
 

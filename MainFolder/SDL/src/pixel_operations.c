@@ -315,6 +315,109 @@ void noiseReduction(SDL_Surface *image_surface)
  }
 }
 
+void lineCut(SDL_Surface *image_surface)
+{
+    Uint32 pixel;
+    Uint8 r;
+    Uint8 g;
+    Uint8 b;
+    int isBlank = 1;
+    int firstCut = 1;
+    int w = image_surface -> w;
+    int h = image_surface -> h;
+    //SDL_Surface *img_copy = copy_image(img);
+    for(int i = 0; i < h ; i++)
+    {
+      isBlank = 1 ;
+      for(int j = 0 ; j < w; j++)
+      {
+        pixel = get_pixel(image_surface, j, i);
+        SDL_GetRGB(pixel, image_surface -> format, &r, &g, &b);
+        //Check if there is a black character in this line
+        if(!r && !g && !b)
+        {
+          isBlank = 0;
+          break;
+        }
+      }
+      //For the first cut we cut the pixel line
+      //before the line with a black character
+      if(!isBlank && firstCut)
+      {
+          for(int k = 0; k < w; k++)
+          {
+            pixel = SDL_MapRGB(image_surface -> format, 255, 0, 0);
+            put_pixel(image_surface, k, i - 1, pixel);
+          }
+          firstCut = 0;
+      }
+      //For the second cut we cut the first white line
+      if(isBlank && !firstCut)
+      {
+        for(int k = 0; k < w; k++)
+        {
+          pixel = SDL_MapRGB(image_surface -> format, 255, 0, 0);
+          put_pixel(image_surface, k, i, pixel);
+        }
+        firstCut = 1;
+      }
+    }
+}
+
+void charCut(SDL_Surface *image_surface)
+{
+    // Variables
+  Uint32 pixel;
+  Uint8 r ;
+  Uint8 g;
+  Uint8 b;
+  int thereIsChar = 0;
+  int lineWasWhite = 1;
+  int canCut = 0;
+  int w = image_surface -> w;
+  int h = image_surface -> h;
+
+  for(int i = 0; i < w; i++)
+  {
+    lineWasWhite = 1;
+    for(int j = 0; j < h; j++)
+    {
+      pixel = get_pixel(image_surface, i, j);
+      SDL_GetRGB(pixel, image_surface -> format, &r, &g, &b);
+      if(r == 0 && g == 0 && b == 0)
+      {
+          thereIsChar = 1;
+          lineWasWhite = 0;
+          break;
+      }
+    }
+    if(lineWasWhite && !canCut)
+    {
+      continue;
+    }
+    if(thereIsChar && !canCut)
+    {
+      for(int k = 0; k < h; k++)
+      {
+        pixel = SDL_MapRGB(image_surface -> format, 255, 0, 0);
+        put_pixel(image_surface, i - 1, k, pixel);
+      }
+      canCut = 1;
+    }
+    if(lineWasWhite && canCut)
+    {
+      for(int k = 0; k < h; k++)
+      {
+        pixel = SDL_MapRGB(image_surface -> format, 255, 0, 0);
+        put_pixel(image_surface, i, k, pixel);
+      }
+      canCut = 0;
+    }
+
+  }
+}
+
+
 
 int* makeArray(SDL_Surface *img){
          int *array = NULL;

@@ -107,57 +107,16 @@ int main()
     SDL_SaveBMP(image_surface, "image_test/image_segmentation.bmp");
     wait_for_keypressed();
 
-    Uint32 pixel;
-    Uint8 r;
-    Uint8 g;
-    Uint8 b;
-    int isBlank = 1;
-    int firstCut = 1;
-    int w = image_surface -> w;
-    int h = image_surface -> h;
-    //SDL_Surface *img_copy = copy_image(img);
-    for(int i = 0; i < h ; i++)
-    {
-      isBlank = 1 ;
-      for(int j = 0 ; j < w; j++)
-      {
-        pixel = get_pixel(image_surface, j, i);
-        SDL_GetRGB(pixel, image_surface -> format, &r, &g, &b);
-        //Check if there is a black character in this line
-        if(!r && !g && !b)
-        {
-          isBlank = 0;
-          break;
-        }
-      }
-      //For the first cut we cut the pixel line
-      //before the line with a black character
-      if(!isBlank && firstCut)
-      {
-          for(int k = 0; k < w; k++)
-          {
-            pixel = SDL_MapRGB(image_surface -> format, 255, 0, 0);
-            put_pixel(image_surface, k, i - 1, pixel);
-          }
-          firstCut = 0;
-      }
-      //For the second cut we cut the first white line
-      if(isBlank && !firstCut)
-      {
-        for(int k = 0; k < w; k++)
-        {
-          pixel = SDL_MapRGB(image_surface -> format, 255, 0, 0);
-          put_pixel(image_surface, k, i, pixel);
-        }
-        firstCut = 1;
-      }
-    }
+    lineCut(image_surface);
+
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();
     
+    charCut(image_surface);
 
 
-
+    update_surface(screen_surface, image_surface);
+    wait_for_keypressed();
     SDL_FreeSurface(image_surface);
     SDL_FreeSurface(screen_surface);
     return 0;
