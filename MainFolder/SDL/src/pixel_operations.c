@@ -364,7 +364,7 @@ void lineCut(SDL_Surface *image_surface)
     }
 }
 
-void charCut(SDL_Surface *image_surface)
+/*void charCut(SDL_Surface *image_surface)
 {
     // Variables
   Uint32 pixel;
@@ -415,6 +415,53 @@ void charCut(SDL_Surface *image_surface)
     }
 
   }
+}*/
+
+void cutchar(SDL_Surface *image_surface)
+//cut the characters of the line with green columns
+{
+    Uint32 pixel;
+    Uint8 r;
+    Uint8 g;
+    Uint8 b;
+    int isBlack = 0;
+    int firstcut = 1;
+    int width = image_surface->w;
+    int height = image_surface->h;
+    for(int i = 0; i < width ; i++)
+    {
+        isBlack = 0;
+        for(int j = 0;j < height; j++)
+        {
+            pixel = get_pixel(image_surface,i,j);
+            SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+            if(r == 0 && g == 0 && b == 0)
+            {
+                isBlack = 1;
+                break;
+            }
+        }
+        //if there is a black character and no first cut before
+        if(isBlack == 1  && firstcut == 1)
+        {
+            for(int k = 0; k < height; k++)
+            {
+                pixel = SDL_MapRGB(image_surface->format, 0, 255, 0);
+                put_pixel(image_surface, i-1, k, pixel);
+            }
+            firstcut = 0;
+        }
+        //if there is a white column and a first cut before
+        else if(isBlack == 0 && firstcut == 0)
+        {
+            for(int k = 0; k < height; k++)
+            {
+                pixel = SDL_MapRGB(image_surface->format, 0, 255, 0);
+                put_pixel(image_surface, i, k, pixel);
+            }
+            firstcut = 1;
+        }
+    }
 }
 
 int mediumPixelSpacingVertical(SDL_Surface *image_surface)

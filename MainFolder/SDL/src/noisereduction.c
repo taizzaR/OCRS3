@@ -78,7 +78,7 @@ int main()
 
     init_sdl();
 
-    image_surface = load_image("image_test/simple_text.png");
+    image_surface = load_image("image_test/noise.bmp");
     screen_surface = display_image(image_surface);
     
 
@@ -101,18 +101,18 @@ int main()
     wait_for_keypressed();
 
     //noise reduction
-    //noiseReduction(image_surface);
+    noiseReduction(image_surface);
 
-    //update_surface(screen_surface, image_surface);
+    /*update_surface(screen_surface, image_surface);
     //SDL_SaveBMP(image_surface, "image_test/image_segmentation.bmp");
-    //wait_for_keypressed();
+    wait_for_keypressed();
 
     lineCut(image_surface);
 
     update_surface(screen_surface, image_surface);
     wait_for_keypressed();
     
-    cutchar(image_surface);
+    cutchar(image_surface);*/
 
 
     update_surface(screen_surface, image_surface);
