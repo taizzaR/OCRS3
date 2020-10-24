@@ -77,7 +77,18 @@ struct NeuralNetwork Forward(struct NeuralNetwork Neural, double (*ac) (double))
 
 struct NeuralNetwork Train(struct NeuralNetwork Neural){};
 
-struct NeuralNetwork Input(struct NeuralNetwork Neural){};
+struct NeuralNetwork Input(struct NeuralNetwork network, double input[])
+{
+	foreach (struct Neuron neuron in network.layers[0])
+	{
+		for(int i = 0; i < inputsLength; i++)
+		{
+			neuron = input[i];
+		}
+	}
+
+	return network;
+}
 
 struct NeuralNetwork Backward(struct NeuralNetwork Neural){};
 
