@@ -27,6 +27,16 @@ struct Dataset{
 
 int main()
 {
+	double _inputs[4][2] = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
+	double _outputs[4][1] = {{0}, {1}, {1}, {0}};
+	struct Neural_Network network;
+
+	network.layersNumber = 2;
+	network.layerLenght[0] = 2;
+	network.layerLenght[1] = 1;
+	network.inputsLenght = 2;
+
+	Initialization(network);
     return 0;
 }
 
@@ -93,7 +103,15 @@ struct NeuralNetwork Input(struct NeuralNetwork network, double input[])
 
 struct NeuralNetwork Backward(struct NeuralNetwork Neural){};
 
-struct NeuralNetwork UpdateWeights(struct NeuralNetwork Neural){};
+struct NeuralNetwork UpdateWeights(struct NeuralNetwork Neural,int i, int j){
+	int k = 0;
+	for (k; k < Neural.layer[i][j].weightsLength; k++)
+	{
+		Neural.layers[i][j].weights[k] += Neural.learningRate * Neural.layers[i][j].delta * Neural.layers[i][j].inputs[k];
+	}
+	Neural.layers[i][j].bias += Neural.learningRate * Neural.layers[i][j].delta;
+	return Neural;
+}
 
 
 
