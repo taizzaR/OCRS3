@@ -36,6 +36,8 @@ int main()
 	network.layerLenght[1] = 1;
 	network.inputsLenght = 2;
 
+	network.learningrate = 0.1;
+
 	Initialization(network);
     return 0;
 }
@@ -86,7 +88,22 @@ struct NeuralNetwork Forward(struct NeuralNetwork Neural, double (*ac) (double))
     return Neural;
 };
 
-struct NeuralNetwork Train(struct NeuralNetwork Neural){};
+struct NeuralNetwork Train(struct NeuralNetwork Neural, struct Dataset dataset)
+{
+	int train = 25;
+	int i,j;
+	for (i = 0; i < train; i++)
+	{
+		for (j = 0; i < dataset.datasetLength; j++)
+		{
+			Neural = Input(Neural,dataset.inputs[j]);
+			Neural = Forward(Neural,Relu);
+			Neural = Backward(Neural);
+		}
+	}
+	
+	return Neural;
+}
 
 struct NeuralNetwork Input(struct NeuralNetwork network, double input[])
 {
@@ -101,7 +118,36 @@ struct NeuralNetwork Input(struct NeuralNetwork network, double input[])
 	return network;
 }
 
-struct NeuralNetwork Backward(struct NeuralNetwork Neural){};
+struct NeuralNetwork Backward(struct NeuralNetwork network, double output[])
+{
+    for (int i = network.layerNumber-1; i >= 0; i++)
+    {
+        if (i != network.layerNumber - 1)
+        {
+            for(j = 0; j < network.layerLength[i]; j++)
+            {
+                double error = 0;
+                for(k = 0; k < network.layerLength[i+1]; k++)
+                {
+                    error += network.layers[i+1][k].delta * network.layers[i+1][k].weights[j];
+                }
+                network.layers[i][j].delta = ReluDerivative(network.layers[i][j].output) * error;
+                network = UpdateWeights(network, i, j);
+            }
+        }
+        else
+        {
+            int j = 0;
+            foreach (struct Neuron neuron in network.layers)
+            {
+                neuron.delta = ReluDerivative(neuron.output) * (output[0] - neuron.output);
+                network = UpdateWeights(network, network.layerNumber - 1, j);
+                j++;
+            }
+        }
+    }
+    return network;
+}
 
 struct NeuralNetwork UpdateWeights(struct NeuralNetwork Neural,int i, int j){
 	int k = 0;
@@ -114,5 +160,7 @@ struct NeuralNetwork UpdateWeights(struct NeuralNetwork Neural,int i, int j){
 }
 
 
-
+double Relu(double x){
+	return x > 0 ? x : 0;
+}
 
