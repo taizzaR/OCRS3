@@ -2,7 +2,7 @@
 #include "tools.h"
 #include <math.h>
 
-struct Neuron{
+struct Neuron{		// Structure d'un neurone
 	double output;
 	int weightsLength;
 	double bias;
@@ -11,26 +11,28 @@ struct Neuron{
 	double weights[2];
 };
 
-struct NeuralNetwork{
+struct NeuralNetwork{			// Structure du reseau
 	struct Neuron layers[2][2];
 	int layersNumber;
-	int inputsLength; // 2
-	int layerLength[2]; // {2,1};
+	int inputsLength; 
+	int layerLength[2]; 
 	double learningRate;
 }
 
-struct Dataset{
-	double inputs[4][2]; // {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
-	double outputs[4][1]; // {{0}, {1}, {1}, {0}};
-	int datasetLength; // 2;
+struct Dataset{			// Structure des data
+	double inputs[4][2]; 
+	double outputs[4][1]; 
+	int datasetLength;
 }
 
-int main()
+int main()		//Programme principal
 {
+	struct Neural_Network network;
+	struct Dataset data;
+
 	double _inputs[4][2] = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
 	double _outputs[4][1] = {{0}, {1}, {1}, {0}};
-	struct Neural_Network network;
-
+	
 	network.layersNumber = 2;
 	network.layerLenght[0] = 2;
 	network.layerLenght[1] = 1;
@@ -38,16 +40,27 @@ int main()
 
 	network.learningrate = 0.1;
 
-	Initialization(network);
+	for (int i = 0; i < 4; i++){
+		for (int j = 0; i < 2; i++)			// Initialisation de data
+		{
+			data.inputs[i][j] = _inputs[i][j];
+		}
+		data.outputs[i] = _outputs[i];
+	}
+	data.datasetLength = 4;
+
+	network = Initialization(network);		// Lancement du reseau
+	network = Train(network,data);
+
     return 0;
 }
 
-struct Neural_Network Initialization(struct NeuralNetwork network)
+struct Neural_Network Initialization(struct NeuralNetwork network)	// Initialise les poids et biais de tous les neurones
 {
     foreach (struct Neuron layer in network.layers)
     {
-        foreach (struct Neuron neuron in layer)
-        {
+        foreach (struct Neuron neuron in layer)				 
+        {													
             foreach (double weight in neuron.weights)
             {
                 weight = Random(-0.5, 0.5);
@@ -66,7 +79,7 @@ double xor(double x, double y):
     return x == y ? 0 : 1;
 }
 
-struct NeuralNetwork Forward(struct NeuralNetwork Neural, double (*ac) (double)){
+struct NeuralNetwork Forward(struct NeuralNetwork Neural, double (*ac) (double)){	// Parcours du reseau classique
     int i,j,k = 0
     double ac = 0;
     for (i = 0; i < Neural.layernumbers; i++)
@@ -88,7 +101,7 @@ struct NeuralNetwork Forward(struct NeuralNetwork Neural, double (*ac) (double))
     return Neural;
 };
 
-struct NeuralNetwork Train(struct NeuralNetwork Neural, struct Dataset dataset)
+struct NeuralNetwork Train(struct NeuralNetwork Neural, struct Dataset dataset)	// Entrainement du reseau
 {
 	int train = 25;
 	int i,j;
@@ -105,7 +118,7 @@ struct NeuralNetwork Train(struct NeuralNetwork Neural, struct Dataset dataset)
 	return Neural;
 }
 
-struct NeuralNetwork Input(struct NeuralNetwork network, double input[])
+struct NeuralNetwork Input(struct NeuralNetwork network, double input[])	// Mis a jour des inputs au debut du reseau
 {
 	foreach (struct Neuron neuron in network.layers[0])
 	{
@@ -118,10 +131,10 @@ struct NeuralNetwork Input(struct NeuralNetwork network, double input[])
 	return network;
 }
 
-struct NeuralNetwork Backward(struct NeuralNetwork network, double output[])
+struct NeuralNetwork Backward(struct NeuralNetwork network, double output[])	// Parcours inverse du reseau
 {
-    for (int i = network.layerNumber-1; i >= 0; i++)
-    {
+    for (int i = network.layerNumber-1; i >= 0; i++)	// Modifie les neurones en fonction
+    {													// du taux d'erreur
         if (i != network.layerNumber - 1)
         {
             for(j = 0; j < network.layerLength[i]; j++)
@@ -149,7 +162,7 @@ struct NeuralNetwork Backward(struct NeuralNetwork network, double output[])
     return network;
 }
 
-struct NeuralNetwork UpdateWeights(struct NeuralNetwork Neural,int i, int j){
+struct NeuralNetwork UpdateWeights(struct NeuralNetwork Neural,int i, int j){	// Modifie les poids d'un neurone
 	int k = 0;
 	for (k; k < Neural.layer[i][j].weightsLength; k++)
 	{
