@@ -26,7 +26,7 @@ struct Dataset	// Structure des data
 	int datasetLength;
 };
 
-double Random(double min, double max);
+double Random(double x, double y);
 struct NeuralNetwork Initialization(struct NeuralNetwork Neural);
 struct NeuralNetwork Train(struct NeuralNetwork Neural, struct Dataset data);
 struct NeuralNetwork Input(struct NeuralNetwork Neural, double input[]);
@@ -35,8 +35,8 @@ struct NeuralNetwork UpdateWeights(struct NeuralNetwork Neural, int i, int j);
 struct NeuralNetwork Forward(struct NeuralNetwork Neural, double (*ac)(double));
 double Relu(double x);
 double ReluDerivative(double x);
-void printNeuron(struct NeuralNetwork NN);
-void printNetwork(struct Neuron N, int i, int j);
+void printNetwork(struct NeuralNetwork network, double finalOutput);
+void printNeuron(struct Neuron neuron);
 
 
 int main()		//Programme principal
@@ -71,16 +71,16 @@ int main()		//Programme principal
 
 struct NeuralNetwork Initialization(struct NeuralNetwork network)	// Initialise les poids et biais de tous les neurones
 {
-    foreach(struct Neuron layer in network.layers)
+    for(int i = 0; i < network.layersNumber; i++)
     {
-        foreach (struct Neuron neuron in layer)				 
-        {													
-            foreach (double weight in neuron.weights)
-            {
-                weight = Random(-0.5, 0.5);
-            }
-
-            neuron.bias = Random(0, 1);
+        for(int j = 0; j < network.layerLength[i]; j++)
+        {
+			//network.layers[i][j].weightsLength = i > 0 ? network.layerLength[i-1] : network.inputsLength;
+			for(int k = 0; k < network.layers[i][j].weightsLength; k++)
+			{
+				network.layers[i][j].weights[k] = Random(-0.5, 0.5);
+			}
+            network.layers[i][j].bias = Random(0, 1);
         }
     }
 
@@ -109,20 +109,16 @@ struct NeuralNetwork Forward(struct NeuralNetwork Neural, double (*ac) (double))
     return Neural;
 }
 
-double Relu(double x){
-	return x > 0 ? x : 0;
-}
-
 struct NeuralNetwork Train(struct NeuralNetwork Neural, struct Dataset dataset)	// Entrainement du reseau
 {
-	int train = ;
+	int train = 10;
 	int i,j;
 	for (i = 0; i < train; i++)
 	{
 		for (j = 0; i < dataset.datasetLength; j++)
 		{
 			Neural = Input(Neural,dataset.inputs[j]);
-			Neural = Forward(Neural,Relu);
+			Neural = Forward(Neural, Relu);
 			Neural = Backward(Neural,dataset.outputs[j]);
 		}
 	}
@@ -132,11 +128,11 @@ struct NeuralNetwork Train(struct NeuralNetwork Neural, struct Dataset dataset)	
 
 struct NeuralNetwork Input(struct NeuralNetwork network, double input[])	// Mis a jour des inputs au debut du reseau
 {
-	foreach (struct Neuron neuron in network.layers[0])
+	for(int i = 0; i < network.layerLength[0]; i++)
 	{
-		for(int i = 0; i < inputsLength; i++)
+		for(int j = 0; j < network.inputsLength; j++)
 		{
-			neuron = input[i];
+			network.layers[0][i].inputs[j] = input[j];
 		}
 	}
 
@@ -162,13 +158,11 @@ struct NeuralNetwork Backward(struct NeuralNetwork network, double output[])	// 
         }
         else
         {
-            int j = 0;
-            foreach(struct Neuron neuron in network.layers)
-            {
-                neuron.delta = ReluDerivative(neuron.output) * (output[0] - neuron.output);
-                network = UpdateWeights(network, network.layersNumber - 1, j);
-                j++;
-            }
+			for(int j = 0; j < network.layerLength[i]; j++)
+			{
+				network.layers[i][j].delta = ReluDerivative(network.layers[i][j].output) * (output[0] - network.layers[i][j].output);
+				network = UpdateWeights(network, i, j);
+			}
         }
     }
     return network;
