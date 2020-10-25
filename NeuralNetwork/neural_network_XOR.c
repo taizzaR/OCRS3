@@ -6,7 +6,7 @@ struct Neuron{		// Structure d'un neurone
 	double output;
 	int weightsLength;
 	double bias;
-	double delta
+	double delta;
 	double inputs[2];
 	double weights[2];
 };
@@ -17,35 +17,49 @@ struct NeuralNetwork{			// Structure du reseau
 	int inputsLength; 
 	int layerLength[2]; 
 	double learningRate;
-}
+};
 
-struct Dataset{			// Structure des data
+struct Dataset	// Structure des data
+{			
 	double inputs[4][2]; 
 	double outputs[4][1]; 
 	int datasetLength;
-}
+};
+
+double Random(double min, double max);
+struct NeuralNetwork Initialization(struct NeuralNetwork Neural);
+struct NeuralNetwork Train(struct NeuralNetwork Neural, struct Dataset data);
+struct NeuralNetwork Input(struct NeuralNetwork Neural, double input[]);
+struct NeuralNetwork Backward(struct NeuralNetwork Neural, double output[]);
+struct NeuralNetwork UpdateWeights(struct NeuralNetwork Neural, int i, int j);
+struct NeuralNetwork Forward(struct NeuralNetwork Neural, double (*ac)(double));
+double Relu(double x);
+double ReluDerivative(double x);
+void printNeuron(struct NeuralNetwork NN);
+void printNetwork(struct Neuron N, int i, int j);
+
 
 int main()		//Programme principal
 {
-	struct Neural_Network network;
+	struct NeuralNetwork network;
 	struct Dataset data;
 
 	double _inputs[4][2] = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
 	double _outputs[4][1] = {{0}, {1}, {1}, {0}};
 	
 	network.layersNumber = 2;
-	network.layerLenght[0] = 2;
-	network.layerLenght[1] = 1;
-	network.inputsLenght = 2;
+	network.layerLength[0] = 2;
+	network.layerLength[1] = 1;
+	network.inputsLength = 2;
 
-	network.learningrate = 0.1;
+	network.learningRate = 0.1;
 
 	for (int i = 0; i < 4; i++){
 		for (int j = 0; i < 2; i++)			// Initialisation de data
 		{
 			data.inputs[i][j] = _inputs[i][j];
 		}
-		data.outputs[i] = _outputs[i];
+		data.outputs[i][0] = _outputs[i][0];
 	}
 	data.datasetLength = 4;
 
@@ -55,9 +69,9 @@ int main()		//Programme principal
     return 0;
 }
 
-struct Neural_Network Initialization(struct NeuralNetwork network)	// Initialise les poids et biais de tous les neurones
+struct NeuralNetwork Initialization(struct NeuralNetwork network)	// Initialise les poids et biais de tous les neurones
 {
-    foreach (struct Neuron layer in network.layers)
+    foreach(struct Neuron layer in network.layers)
     {
         foreach (struct Neuron neuron in layer)				 
         {													
@@ -73,37 +87,35 @@ struct Neural_Network Initialization(struct NeuralNetwork network)	// Initialise
     return network;
 }
 
-
-double xor(double x, double y):
-{
-    return x == y ? 0 : 1;
-}
-
 struct NeuralNetwork Forward(struct NeuralNetwork Neural, double (*ac) (double)){	// Parcours du reseau classique
-    int i,j,k = 0
-    double ac = 0;
-    for (i = 0; i < Neural.layernumbers; i++)
+    int i,j,k = 0;
+    double x = 0;
+    for (i = 0; i < Neural.layersNumber; i++)
     {
-        for (for j = 0,; j < Neural.layerLength[i]; j++){
+        for (j = 0; j < Neural.layerLength[i]; j++){
 	    	if (i != 0){
 				for (k = 0; Neural.layers[i][j].weightsLength; k++){
-		    		Neural.layers[i][j].inputs[k] = Neural.layers[i-1][j].output[k];	
+		    		Neural.layers[i][j].inputs[k] = Neural.layers[i-1][j].output;	
 				}
 	    	}
-	    	for (k = 0; k < Neural.layers[i][j].weightLength; k++){
-				y += (Neural.layers[i][j].inputs[k] * Neural.layers[i][j].weights[k]);
+	    	for (k = 0; k < Neural.layers[i][j].weightsLength; k++){
+				x += (Neural.layers[i][j].inputs[k] * Neural.layers[i][j].weights[k]);
 			}
-	    	y += Neural[i][j].bias;
-	    	y = (*ac)(y);
-	    	Neural.layers[i][j].output = y;
+	    	x += Neural.layers[i][j].bias;
+	    	x = (*ac)(x);
+	    	Neural.layers[i][j].output = x;
 		}
     }
     return Neural;
-};
+}
+
+double Relu(double x){
+	return x > 0 ? x : 0;
+}
 
 struct NeuralNetwork Train(struct NeuralNetwork Neural, struct Dataset dataset)	// Entrainement du reseau
 {
-	int train = 25;
+	int train = ;
 	int i,j;
 	for (i = 0; i < train; i++)
 	{
@@ -111,7 +123,7 @@ struct NeuralNetwork Train(struct NeuralNetwork Neural, struct Dataset dataset)	
 		{
 			Neural = Input(Neural,dataset.inputs[j]);
 			Neural = Forward(Neural,Relu);
-			Neural = Backward(Neural);
+			Neural = Backward(Neural,dataset.outputs[j]);
 		}
 	}
 	
@@ -133,14 +145,14 @@ struct NeuralNetwork Input(struct NeuralNetwork network, double input[])	// Mis 
 
 struct NeuralNetwork Backward(struct NeuralNetwork network, double output[])	// Parcours inverse du reseau
 {
-    for (int i = network.layerNumber-1; i >= 0; i++)	// Modifie les neurones en fonction
+    for (int i = network.layersNumber-1; i >= 0; i++)	// Modifie les neurones en fonction
     {													// du taux d'erreur
-        if (i != network.layerNumber - 1)
+        if (i != network.layersNumber - 1)
         {
-            for(j = 0; j < network.layerLength[i]; j++)
+            for(int j = 0; j < network.layerLength[i]; j++)
             {
                 double error = 0;
-                for(k = 0; k < network.layerLength[i+1]; k++)
+                for(int k = 0; k < network.layerLength[i+1]; k++)
                 {
                     error += network.layers[i+1][k].delta * network.layers[i+1][k].weights[j];
                 }
@@ -151,10 +163,10 @@ struct NeuralNetwork Backward(struct NeuralNetwork network, double output[])	// 
         else
         {
             int j = 0;
-            foreach (struct Neuron neuron in network.layers)
+            foreach(struct Neuron neuron in network.layers)
             {
                 neuron.delta = ReluDerivative(neuron.output) * (output[0] - neuron.output);
-                network = UpdateWeights(network, network.layerNumber - 1, j);
+                network = UpdateWeights(network, network.layersNumber - 1, j);
                 j++;
             }
         }
@@ -164,7 +176,7 @@ struct NeuralNetwork Backward(struct NeuralNetwork network, double output[])	// 
 
 struct NeuralNetwork UpdateWeights(struct NeuralNetwork Neural,int i, int j){	// Modifie les poids d'un neurone
 	int k = 0;
-	for (k; k < Neural.layer[i][j].weightsLength; k++)
+	for (k; k < Neural.layers[i][j].weightsLength; k++)
 	{
 		Neural.layers[i][j].weights[k] += Neural.learningRate * Neural.layers[i][j].delta * Neural.layers[i][j].inputs[k];
 	}
@@ -172,8 +184,21 @@ struct NeuralNetwork UpdateWeights(struct NeuralNetwork Neural,int i, int j){	//
 	return Neural;
 }
 
-
-double Relu(double x){
-	return x > 0 ? x : 0;
+void printNeuron(struct Neuron neuron)
+{
+    printf("INPUTS : %f, %f\nBIAS : %f\nOUTPUT : %f\n", neuron.inputs[0], neuron.inputs[1], neuron.bias, neuron.output);
 }
 
+
+void printNetwork(struct NeuralNetwork network, double finalOutput)
+{
+    int i;
+    printNeuron(network.layers[0][0]);
+    for (i = 0; i < 3; i++)
+        printf("\n");
+    printf("                    ");
+    printNeuron(network.layers[1][0]);
+    for (i = 0; i < 3; i++)
+        printf("\n");
+    printNeuron(network.layers[0][1]);
+}
